@@ -1,1 +1,4 @@
-/// <reference types="react-scripts" />
+interface Symbol {
+  description: string;
+  code: string;
+}

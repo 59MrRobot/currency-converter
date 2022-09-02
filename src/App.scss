@@ -1,0 +1,51 @@
+@import './styles/fonts';
+
+.app {
+  font-family: "Acme Regular", sans-serif;
+
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    max-width: 768px;
+    margin: 0 auto;
+  }
+
+  &__title {
+    font-family: "Oswald Medium", sans-serif;
+  }
+}
+
+.currency {
+
+  &__controls {
+    display: flex;
+    align-items: center;
+
+    padding: 16px 8px 16px 16px;
+
+    border: 1px solid grey;
+    border-radius: 10px;
+
+    transition: border-color 0.3s;
+
+    &:hover {
+      border-color: black;
+    }
+  }
+
+  &__input {
+    border: none;
+
+    outline: none;
+  }
+
+  &__select {
+    width: 200px;
+    margin-left: 24px;
+
+    border: none;
+    background: transparent;
+  }
+}
