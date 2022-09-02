@@ -42,7 +42,7 @@ const App: React.FC = () => {
   return (
     <div className="app">
       <div className="app__wrapper">
-        <h1 className="app__title">Conversion Currency</h1>
+        <h1 className="app__title">Currency Converter</h1>
 
         <div className="currency">
           <h2>From</h2>
