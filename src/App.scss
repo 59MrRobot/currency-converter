@@ -1,15 +1,25 @@
 @import './styles/fonts';
 
 .app {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+
   font-family: "Acme Regular", sans-serif;
+
+  background-color: #EEF1EF;
 
   &__wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
 
-    max-width: 768px;
+    width: 768px;
     margin: 0 auto;
+    padding: 0 0 32px 0;
+
+    background-color: #A9B4C2;
+    border-radius: 16px;
   }
 
   &__title {
@@ -25,6 +35,7 @@
 
     padding: 16px 8px 16px 16px;
 
+    background-color: #7D98A1;
     border: 1px solid grey;
     border-radius: 10px;
 
@@ -37,6 +48,7 @@
 
   &__input {
     border: none;
+    background-color: #7D98A1;
 
     outline: none;
   }
