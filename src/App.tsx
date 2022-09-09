@@ -25,6 +25,9 @@ const App: React.FC = () => {
 
   useEffect(() => {
     loadSymbols();
+
+    window.localStorage.setItem('fromCurrencySymbol', 'USD');
+    window.localStorage.setItem('toCurrencySymbol', 'ZAR');
   }, [loadSymbols]);
 
   const loadConversionRate = useCallback(
