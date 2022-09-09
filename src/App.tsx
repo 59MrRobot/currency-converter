@@ -5,28 +5,34 @@ import './App.scss';
 
 const App: React.FC = () => {
   const [symbols, setSymbols] = useState<Symbol[]>([]);
-  const [fromCurrencySymbol, setFromCurrencySymbol] = useState('USD');
+  // const [fromCurrencySymbol, setFromCurrencySymbol] = useState('USD');
   const [fromCurrencyAmount, setFromCurrencyAmount] = useState('1');
-  const [toCurrencySymbol, setToCurrencySymbol] = useState('ZAR');
+  // const [toCurrencySymbol, setToCurrencySymbol] = useState('ZAR');
   const [toCurrencyAmount, setToCurrencyAmount] = useState('');
   const [conversionRate, setConversionRate] = useState<number>();
 
-  const loadSymbols = async () => {
-    const loadedSymbols = await getSymbols();
+  // useEffect(() => {
+  //   window.localStorage.setItem('fromCurrencySymbol', 'USD');
+  //   window.localStorage.setItem('toCurrencySymbol', 'ZAR');
+  // }, []);
 
-    setSymbols(Object.values(loadedSymbols.symbols));
-  }
+  const loadSymbols = useCallback(
+    async () => {
+      const loadedSymbols = await getSymbols();
+
+      setSymbols(Object.values(loadedSymbols.symbols));
+    }, []);
 
   useEffect(() => {
     loadSymbols();
-  }, []);
+  }, [loadSymbols]);
 
   const loadConversionRate = useCallback(
     async () => {
-      const loadedRate = await getConversionRate(fromCurrencySymbol, toCurrencySymbol);
+      const loadedRate = await getConversionRate(window.localStorage.getItem('fromCurrencySymbol')!, window.localStorage.getItem('toCurrencySymbol')!);
 
       setConversionRate(loadedRate.info.rate);
-    }, [fromCurrencySymbol, toCurrencySymbol]);
+    }, []);
 
   useEffect(() => {
     loadConversionRate();
@@ -61,12 +67,15 @@ const App: React.FC = () => {
               }}
             />
 
-            <p>{fromCurrencySymbol}</p>
+            <p>{window.localStorage.getItem('fromCurrencySymbol')}</p>
 
             <select
               className="currency__select"
-              value={fromCurrencySymbol}
-              onChange={(event) => setFromCurrencySymbol(event.target.value)}
+              value={window.localStorage.getItem('fromCurrencySymbol')!}
+              onChange={(event) => {
+                window.localStorage.setItem('fromCurrencySymbol', event.target.value);
+                loadConversionRate();
+              }}
             >
               {symbols.map(symbol => (
                 <option
@@ -101,12 +110,15 @@ const App: React.FC = () => {
               }}
             />
 
-            <p>{toCurrencySymbol}</p>
+            <p>{window.localStorage.getItem('toCurrencySymbol')}</p>
 
             <select
               className="currency__select"
-              value={toCurrencySymbol}
-              onChange={(event) => setToCurrencySymbol(event.target.value)}
+              value={window.localStorage.getItem('toCurrencySymbol')!}
+              onChange={(event) => {
+                window.localStorage.setItem('toCurrencySymbol', event.target.value);
+                loadConversionRate();
+              }}
             >
               {symbols.map(symbol => (
                 <option
