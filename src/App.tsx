@@ -1,20 +1,34 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { getConversionRate } from './api/convert';
+import { useDispatch, useSelector } from 'react-redux';
 import { getSymbols } from './api/symbol';
 import './App.scss';
+import { convert } from './redux/apiCalls';
+import SwapVertIcon from '@mui/icons-material/SwapVert';
 
 const App: React.FC = () => {
-  const [symbols, setSymbols] = useState<Symbol[]>([]);
-  // const [fromCurrencySymbol, setFromCurrencySymbol] = useState('USD');
-  const [fromCurrencyAmount, setFromCurrencyAmount] = useState('1');
-  // const [toCurrencySymbol, setToCurrencySymbol] = useState('ZAR');
-  const [toCurrencyAmount, setToCurrencyAmount] = useState('');
-  const [conversionRate, setConversionRate] = useState<number>();
+  const conversionRate = useSelector((state: any) => state.conversionRate);
+  const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   window.localStorage.setItem('fromCurrencySymbol', 'USD');
-  //   window.localStorage.setItem('toCurrencySymbol', 'ZAR');
-  // }, []);
+  const [symbols, setSymbols] = useState<Symbol[]>([]);
+
+  const [fromCurrencyAmount, setFromCurrencyAmount] = useState('1');
+  const [fromSymbol, setFromSymbol] = useState("USD");
+
+  const [toCurrencyAmount, setToCurrencyAmount] = useState("");
+  const [toSymbol, setToSymbol] = useState("ZAR");
+
+  const loadConverstionInformation = useCallback(
+    () => {
+      convert(dispatch, fromSymbol, toSymbol);
+    }, [dispatch, fromSymbol, toSymbol]);
+
+  useEffect(() => {
+    loadConverstionInformation();
+
+    setToCurrencyAmount(String(
+      Math.round(Number(fromCurrencyAmount) * conversionRate * 100) / 100
+    ));
+  }, [conversionRate, fromCurrencyAmount, loadConverstionInformation]);
 
   const loadSymbols = useCallback(
     async () => {
@@ -25,28 +39,17 @@ const App: React.FC = () => {
 
   useEffect(() => {
     loadSymbols();
-
-    window.localStorage.setItem('fromCurrencySymbol', 'USD');
-    window.localStorage.setItem('toCurrencySymbol', 'ZAR');
   }, [loadSymbols]);
 
-  const loadConversionRate = useCallback(
-    async () => {
-      const loadedRate = await getConversionRate(window.localStorage.getItem('fromCurrencySymbol')!, window.localStorage.getItem('toCurrencySymbol')!);
+  const flipCurrencies = useCallback(() => {
+    const tempSymbol = fromSymbol;
+    setFromSymbol(toSymbol);
+    setToSymbol(tempSymbol);
 
-      setConversionRate(loadedRate.info.rate);
-    }, []);
-
-  useEffect(() => {
-    loadConversionRate();
-  }, [loadConversionRate]);
-  
-
-  useEffect(() => {
-    if (conversionRate) {
-      setToCurrencyAmount(String(+fromCurrencyAmount * conversionRate));
-    }
-  }, [conversionRate, fromCurrencyAmount]);
+    const tempAmount = fromCurrencyAmount;
+    setFromCurrencyAmount(toCurrencyAmount);
+    setToCurrencyAmount(tempAmount);
+  }, [fromCurrencyAmount, fromSymbol, toCurrencyAmount, toSymbol]);
 
   return (
     <div className="app">
@@ -61,23 +64,19 @@ const App: React.FC = () => {
               type="text"
               id="first-currency"
               className="currency__input"
-              value={(Number.isNaN(+fromCurrencyAmount)) 
-                ? (fromCurrencyAmount) 
-                : (Math.round(+fromCurrencyAmount! * 100) / 100)
-              }
+              value={fromCurrencyAmount}
               onChange={(event) => {
                 setFromCurrencyAmount(event.target.value);
               }}
             />
 
-            <p>{window.localStorage.getItem('fromCurrencySymbol')}</p>
+            <p>{fromSymbol}</p>
 
             <select
               className="currency__select"
-              value={window.localStorage.getItem('fromCurrencySymbol')!}
+              value={fromSymbol}
               onChange={(event) => {
-                window.localStorage.setItem('fromCurrencySymbol', event.target.value);
-                loadConversionRate();
+                setFromSymbol(event.target.value);
               }}
             >
               {symbols.map(symbol => (
@@ -91,6 +90,13 @@ const App: React.FC = () => {
             </select>
           </div>
         </div>
+        
+        <div 
+          className="app__flip-icon" 
+          onClick={() => flipCurrencies()}
+        >
+          <SwapVertIcon />
+        </div>
 
         <div className="currency">
           <h2>To</h2>
@@ -100,27 +106,16 @@ const App: React.FC = () => {
               type="text"
               id="first-currency"
               className="currency__input"
-              value={(Number.isNaN(+toCurrencyAmount)) 
-                ? ('') 
-                : (Math.round(+toCurrencyAmount! * 100) / 100)
-              }
-              onChange={(event) => {
-                setToCurrencyAmount(event.target.value);
-
-                if (!Number.isNaN(+event.target.value)) {
-                  setFromCurrencyAmount(String(+event.target.value / conversionRate!));
-                }
-              }}
+              value={toCurrencyAmount}
             />
 
-            <p>{window.localStorage.getItem('toCurrencySymbol')}</p>
+            <p>{toSymbol}</p>
 
             <select
               className="currency__select"
-              value={window.localStorage.getItem('toCurrencySymbol')!}
+              value={toSymbol}
               onChange={(event) => {
-                window.localStorage.setItem('toCurrencySymbol', event.target.value);
-                loadConversionRate();
+                setToSymbol(event.target.value);
               }}
             >
               {symbols.map(symbol => (
