@@ -8,7 +8,7 @@ Access my site at https://59mrrobot.github.io/currency-converter/
 
 ## About The App:
 
-I have built a currency that utilizes an API (https://exchangeratesapi.io/).
+I have built a currency converter that utilizes an API (https://exchangeratesapi.io/).
 
 ## Screenshots:
 
