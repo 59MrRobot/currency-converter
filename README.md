@@ -12,7 +12,7 @@ I have built a currency converter that utilizes an API (https://exchangeratesapi
 
 ## Screenshots:
 
-![App screenshot - currency converter](currency-screenshot.png)
+![App screenshot - currency converter](home.png)
 
 ## Technologies:
 
